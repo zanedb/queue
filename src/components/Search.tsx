@@ -30,6 +30,19 @@ export default function Search({ id }: { id: string }) {
     }
   }
 
+  const addToQueue = async (track: SpotifyTrack) => {
+    const req = await fetch(`/api/spotify/queue`, { method: 'POST', body: JSON.stringify({ uri: track.uri, key: id }) })
+    const body = await req.json()
+
+    if(req.status === 200) {
+      setQuery('')
+    } else if(req.status === 404) {
+      console.log(`you need to start playing music on a device first silly`)
+    } else {
+      console.warn(body.error.message)
+    }
+  }
+
   const handleChange = (value: string) => {
     setValue(value)
     debouncedSearch(value)
@@ -63,7 +76,7 @@ export default function Search({ id }: { id: string }) {
         {!isEmpty(value) && data?.items?.length > 0 && (
           <CommandGroup heading="Search Results">
             {data.items.map((track: SpotifyTrack) => (
-              <CommandItem key={track.id} value={track.id}>{track.name} — {artists(track.artists)}</CommandItem> 
+              <CommandItem onSelect={() => addToQueue(track)} key={track.id} value={track.id} className="cursor-pointer">
                 <TrackRow track={track} />
               </CommandItem> 
             ))}
