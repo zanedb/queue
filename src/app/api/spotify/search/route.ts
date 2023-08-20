@@ -1,26 +1,37 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { isEmpty } from 'lodash'
+import { kv } from '@vercel/kv'
 import Spotify from 'spotify-web-api-node'
 
 const spotify = new Spotify()
-spotify.setRefreshToken(process.env.REFRESH_TOKEN as string)
-spotify.setClientId(process.env.CLIENT_ID as string)
-spotify.setClientSecret(process.env.CLIENT_SECRET as string)
+spotify.setClientId(process.env.SPOTIFY_CLIENT_ID as string)
+spotify.setClientSecret(process.env.SPOTIFY_CLIENT_SECRET as string)
+
+// TODO: make api route to get access token, store client side; perhaps?
 
 export async function GET(request: NextRequest) {
   const urlParams = new URL(request.url).searchParams
+
+  const key = urlParams.get('key')
+  if (isEmpty(key)) return NextResponse.json([], { status: 401 })
+
   const query = urlParams.get('q') // TODO: validate query
   if (isEmpty(query)) return NextResponse.json([])
 
-  // TODO: use vercel kv here
-  const refreshRequest = await spotify.refreshAccessToken()
-  const token = refreshRequest.body['access_token']
-  spotify.setAccessToken(token)
+  const accessToken = await kv.hget(key as string, 'accessToken')
+  spotify.setAccessToken(accessToken as string)
 
-  const searchRequest = await spotify.searchTracks(query as string)
-  if (searchRequest.statusCode !== 200)
-    return NextResponse.json([], { status: 500 })
+  try {
+    const searchRequest = await spotify.searchTracks(query as string)
 
-  const tracks = searchRequest.body.tracks
-  return NextResponse.json(tracks)
+    if (searchRequest.statusCode !== 200)
+      return NextResponse.json([], { status: 500 })
+
+    const tracks = searchRequest.body.tracks
+    return NextResponse.json(tracks)
+  } catch (e) {
+    // TODO: try refreshing token first, then if failed return 401
+    // maybe make a /refresh route?
+    return NextResponse.json([], { status: 401 })
+  }
 }

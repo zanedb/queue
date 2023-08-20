@@ -13,14 +13,14 @@ import {
 import { SpotifyTrack } from '@/lib/types'
 import { artists } from '@/lib/utils'
 
-export default function Search() {
+export default function Search({ id }: { id: string }) {
   const [value, setValue] = useState("")
   const [query, setQuery] = useState("")
 
   const useSpotifySearch = (query: string) => {
     //@ts-ignore
     const fetcher = (...args) => fetch(...args).then(res => res.json())
-    const { data, error, isLoading } = useSWR(`/api/spotify/search?q=${new URLSearchParams(query)}`, fetcher)
+    const { data, error, isLoading } = useSWR(`/api/spotify/search?${new URLSearchParams({ q: query, key: id })}`, fetcher)
    
     return {
       data,
