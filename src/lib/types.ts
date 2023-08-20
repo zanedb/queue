@@ -7,9 +7,22 @@ export interface SpotifyTrack {
   uri: string
   type: string
   album: {
-    images: [height: number, width: number, url: string]
+    images: [
+      {
+        height: number
+        width: number
+        url: string
+      }
+    ]
     name: string
     release_date: string
   }
-  artists: [name: string, uri: string, id: string, href: string]
+  artists: [
+    {
+      name: string
+      uri: string
+      id: string
+      href: string
+    }
+  ]
 }
