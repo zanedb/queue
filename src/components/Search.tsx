@@ -11,6 +11,7 @@ import {
   CommandList,
 } from "@/components/ui/command"
 import { SpotifyTrack } from '@/lib/types'
+import Image from 'next/image'
 import { artists } from '@/lib/utils'
 
 export default function Search({ id }: { id: string }) {
@@ -51,22 +52,36 @@ export default function Search({ id }: { id: string }) {
   const { data, isLoading, error } = useSpotifySearch(query)
 
   return (
-    <Command loop className="rounded-lg border shadow-md max-w-xs" shouldFilter={false}>
+    <Command loop className="rounded-lg border shadow-md max-w-xs md:max-w-sm lg:max-w-md" shouldFilter={false}>
       <CommandInput placeholder="Search tracks..." value={value} onValueChange={handleChange} />
       <CommandList>
         {!isEmpty(value) && isLoading && (
           <CommandGroup heading="Search Results">
-            <CommandItem>Loading..</CommandItem>
+            <CommandItem>Loading..</CommandItem>{/* TODO: skeleton ui when loading*/}
           </CommandGroup>
         )}
         {!isEmpty(value) && data?.items?.length > 0 && (
           <CommandGroup heading="Search Results">
             {data.items.map((track: SpotifyTrack) => (
               <CommandItem key={track.id} value={track.id}>{track.name} — {artists(track.artists)}</CommandItem> 
+                <TrackRow track={track} />
+              </CommandItem> 
             ))}
           </CommandGroup>
         )}
       </CommandList>
     </Command>
+  )
+}
+
+export function TrackRow({ track }: {track: SpotifyTrack}) {
+  return (
+    <>
+      <Image src={track.album.images[0].url} width={48} height={48} alt={track.name} className="rounded-sm" />
+      <div className="flex flex-col pl-2">
+        <h3 className="font-medium line-clamp-1">{track.name}</h3>
+        <h4 className="font-xs text-gray-700 line-clamp-1">{artists(track.artists)}</h4>
+      </div>
+    </>
   )
 }
