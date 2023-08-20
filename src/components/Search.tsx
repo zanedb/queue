@@ -11,6 +11,7 @@ import {
   CommandList,
 } from "@/components/ui/command"
 import { SpotifyTrack } from '@/lib/types'
+import { artists } from '@/lib/utils'
 
 export default function Search() {
   const [value, setValue] = useState("")
@@ -46,12 +47,6 @@ export default function Search() {
       debouncedSearch.cancel()
     }
   }, [debouncedSearch])
-
-  const artists = (artists: any) => {
-    //@ts-ignore
-    const _artists = artists.map(({ name }) => name)
-    return (_artists.length > 1 ? _artists.join(', ') : _artists[0])
-  }
 
   const { data, isLoading, error } = useSpotifySearch(query)
 
