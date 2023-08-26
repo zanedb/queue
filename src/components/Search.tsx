@@ -10,8 +10,9 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command"
-import { SpotifyTrack } from '@/lib/types'
 import Image from 'next/image'
+
+import { SpotifyTrack } from '@/lib/types'
 import { artists } from '@/lib/utils'
 
 export default function Search({ id }: { id: string }) {
