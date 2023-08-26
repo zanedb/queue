@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
     await spotify.addToQueue(uri)
     const q = await spotify.getMyCurrentPlaybackState()
 
-    return NextResponse.json(JSON.stringify(q), { status: 200 })
+    return NextResponse.json(q)
   } catch (e: any) {
     // TODO: try refreshing token first, then if failed return 401
     // maybe make a /refresh route?
