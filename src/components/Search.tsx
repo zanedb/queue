@@ -38,7 +38,7 @@ export default function Search({ id }: { id: string }) {
     if(req.status === 200) {
       setQuery('')
     } else if(req.status === 404) {
-      console.log(`you need to start playing music on a device first silly`)
+      console.log(`you need to start playing music on a device first silly`) // TODO: display error with toast
     } else {
       console.warn(body.error.message)
     }

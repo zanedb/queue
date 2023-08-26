@@ -7,8 +7,6 @@ const spotify = new Spotify()
 spotify.setClientId(process.env.SPOTIFY_CLIENT_ID as string)
 spotify.setClientSecret(process.env.SPOTIFY_CLIENT_SECRET as string)
 
-// TODO: make api route to get access token, store client side; perhaps?
-
 export async function GET(request: NextRequest) {
   const urlParams = new URL(request.url).searchParams
 
@@ -22,17 +20,11 @@ export async function GET(request: NextRequest) {
   if (accessToken === null) return NextResponse.json([], { status: 401 })
   spotify.setAccessToken(accessToken as string)
 
-  try {
-    const searchRequest = await spotify.searchTracks(query as string)
+  const searchRequest = await spotify.searchTracks(query as string)
 
-    if (searchRequest.statusCode !== 200)
-      return NextResponse.json([], { status: 500 })
+  if (searchRequest.statusCode !== 200)
+    return NextResponse.json([], { status: 500 })
 
-    const tracks = searchRequest.body.tracks
-    return NextResponse.json(tracks)
-  } catch (e) {
-    // TODO: try refreshing token first, then if failed return 401
-    // maybe make a /refresh route?
-    return NextResponse.json([], { status: 401 })
-  }
+  const tracks = searchRequest.body.tracks
+  return NextResponse.json(tracks)
 }
