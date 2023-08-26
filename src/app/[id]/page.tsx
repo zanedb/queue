@@ -1,3 +1,4 @@
+import NowPlaying from "@/components/NowPlaying";
 import Search from "@/components/Search";
 
 export default function Page({ params }: { params: { id: string } }) {
@@ -7,6 +8,7 @@ export default function Page({ params }: { params: { id: string } }) {
         <div>
           <h1 className="mb-4 text-lg font-semibold">Add to Queue</h1>
         </div>
+        <NowPlaying id={params.id} />
         <Search id={params.id} />
       </div>
     </main>
