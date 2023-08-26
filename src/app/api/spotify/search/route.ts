@@ -19,6 +19,7 @@ export async function GET(request: NextRequest) {
   if (isEmpty(query)) return NextResponse.json([])
 
   const accessToken = await kv.hget(key as string, 'accessToken')
+  if (accessToken === null) return NextResponse.json([], { status: 401 })
   spotify.setAccessToken(accessToken as string)
 
   try {

@@ -21,6 +21,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'missing uri' }, { status: 400 })
 
   const accessToken = await kv.hget(key as string, 'accessToken')
+  if (accessToken === null)
+    return NextResponse.json({ error: 'invalid key' }, { status: 401 })
   spotify.setAccessToken(accessToken as string)
 
   try {
